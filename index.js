@@ -54,3 +54,15 @@ function searchPokemon() {
   const searchTerm = searchInput.value.toLowerCase();
   const filteredPokemonList = pokemonList.filter(pokemon =>
     pokemon)}
+
+// Utilisez l'API Fetch pour envoyer une requête GET à l'endpoint des types
+fetch('https://pokeapi.co/api/v2/type')
+  .then(response => response.json())
+  .then(data => {
+    // Extraire les noms des types de Pokémon
+    const types = data.results.map(type => type.name);
+    console.log(types); // Affiche les noms des types de Pokémon
+  })
+  .catch(error => console.log(error));
+
+
