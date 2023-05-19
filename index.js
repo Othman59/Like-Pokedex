@@ -1,23 +1,56 @@
+const pokemonListElement = document.getElementById('pokemonList');
+const pokemonDetailsElement = document.getElementById('pokemonDetails');
 const searchInput = document.getElementById('searchInput');
-const searchButton = document.getElementById('searchButton');
-const pokemonList = document.getElementById('pokemonList');
-const pokemonDetails = document.getElementById('pokemonDetails');
 
-// Fonction pour obtenir les détails d'un Pokémon depuis l'API PokeAPI en utilisant son nom ou son identifiant
-async function getPokemonDetails(identifier) {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${identifier}`);
+let pokemonList = [];
+
+// ...
+
+// Fonction pour récupérer les détails d'un Pokémon depuis l'API PokeAPI
+async function fetchPokemonDetails(pokemon) {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`);
     const data = await response.json();
-  
-    const types = data.types.map(type => type.type.name).join(', ');
-    const stats = data.stats.map(stat => `${stat.stat.name}: ${stat.base_stat}`).join('<br>');
-  
-    const pokemonHtml = `
-      <h2>${data.name} (#${data.id})</h2>
-      <img src="${data.sprites.front_default}" alt="${data.name}">
-      <p><strong>Type:</strong> ${types}</p>
-      <p><strong>Statistiques:</strong><br>${stats}</p>
-    `;
-  
-    pokemonDetails.innerHTML = pokemonHtml;
+    displayPokemonDetails(data);
   }
+// ...
   
+
+// Fonction pour afficher la liste des Pokémon
+function displayPokemonList() {
+  pokemonListElement.innerHTML = '';
+
+  pokemonList.forEach(pokemon => {
+    const pokemonCard = document.createElement('div');
+    pokemonCard.classList.add('pokemon-card');
+    pokemonCard.textContent = `${pokemon.name} (#${pokemon.id})`;
+    pokemonCard.addEventListener('click', () => fetchPokemonDetails(pokemon));
+    pokemonListElement.appendChild(pokemonCard);
+   
+  });
+}
+
+// Fonction pour récupérer les détails d'un Pokémon depuis l'API PokeAPI
+async function fetchPokemonDetails(pokemon) {
+  const response = await fetch(pokemon.url);
+  const data = await response.json();
+  displayPokemonDetails(data);
+}
+
+// Fonction pour afficher les détails d'un Pokémon
+function displayPokemonDetails(pokemon) {
+  pokemonDetailsElement.innerHTML = `
+    <h2>${pokemon.name} (#${pokemon.id})</h2>
+    <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+    <p>Type: ${pokemon.types.map(type => type.type.name).join(', ')}</p>
+    <p>Stats:</p>
+    <ul>
+      ${pokemon.stats.map(stat => `<li>${stat.stat.name}: ${stat.base_stat}</li>`).join('')}
+    </ul>
+  `;
+}
+
+// Fonction pour effectuer une recherche de Pokémon
+function searchPokemon() {
+  const searchTerm = searchInput.value.toLowerCase();
+  const filteredPokemonList = pokemonList.filter(pokemon =>
+    pokemon)}
