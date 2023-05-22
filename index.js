@@ -1,49 +1,45 @@
-const searchInput = document.getElementById('searchInput');
-const searchButton = document.getElementById('searchButton');
-const pokemonList = document.getElementById('pokemonList');
-const pokemonDetails = document.getElementById('pokemonDetails');
-
-// Fonction pour obtenir la liste des Pokémon depuis l'API PokeAPI
-async function getPokemonList() {
-  const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=100');
-  const data = await response.json();
-
-  const pokemon = data.results;
-  pokemon.forEach(p => {
-    const pokemonCard = document.createElement('div');
-    pokemonCard.classList.add('pokemon-card');
-    pokemonCard.innerText = `${p.name} (#${getPokemonIdFromUrl(p.url)})`;
-
-    pokemonCard.addEventListener('click', () => {
-      getPokemonDetails(p.name);
-    });
-
-    pokemonList.appendChild(pokemonCard);
-  });
-}
 
 // Fonction pour obtenir les détails d'un Pokémon depuis l'API PokeAPI
-async function getPokemonDetails(name) {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-    const data = await response.json();
+
+const pokedex = document.getElementById("pokedex");
+
+console.log(pokedex);
+
+const fecthPokemon = () => {
+  const promises = [];
+  for (let i = 1; i < 150; i++){
+    const url = `https://pokeapi.co/api/v2/pokemon//${i}`;
+    promises.push(fetch(url).then((res) => res.json()));
+}
+
+  Promise.all(promises).then((results) => {
+    const pokemon = results.map((data) => ({
+      name: data.name,
+      id: data.id,
+      image: data.sprites['front_default'],
+      type: data.types.map((type) => type.type.name).joint(', ')
+    }));
+    displayPokemon(pokemon);
+
+  });
+}; 
+
+const displayPokemon = (pokemon) => {
+  console.log(pokemon);
+  const pokemonHTMLString = pokemon.map (pokemon =>`
+  <li>
+    <img class="card-image" src ="${pokemon.image}"/>
+    <h2 class="card-title>${pokeman.id}. ${pokeman.name}</h2>
+    <p class="card-subtitle">Type: ${pokeman.type}</p>
+  </li>
+
+  `
+    )
   
-    const pokemonHtml = `
-      <h2>${data.name} (#${data.id})</h2>
-      <img src="${data.sprites.front_default}" alt="${data.name}">
-      <table>
-        <tr>
-          <th>Statistique</th>
-          <th>Valeur</th>
-        </tr>
-        ${data.stats
-          .map(
-            stat =>
-              `<tr><td>${stat.stat.name}</td><td>${stat.base_stat}</td></tr>`
-          )
-          .join('')}
-      </table>
-    `;
-  
-    pokemonDetails.innerHTML = pokemonHtml;
-  }
-  
+    .joint(' ')
+  pokedex.innerHTML = pokemonHTMLString;
+};
+
+fecthPokemon();
+
+
