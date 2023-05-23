@@ -1,45 +1,67 @@
+const pokedex = document.getElementById('pokedex');
+const pokeCache = {};
 
-// Fonction pour obtenir les détails d'un Pokémon depuis l'API PokeAPI
-
-const pokedex = document.getElementById("pokedex");
-
-console.log(pokedex);
-
-const fecthPokemon = () => {
-  const promises = [];
-  for (let i = 1; i < 150; i++){
-    const url = `https://pokeapi.co/api/v2/pokemon//${i}`;
-    promises.push(fetch(url).then((res) => res.json()));
-}
-
-  Promise.all(promises).then((results) => {
-    const pokemon = results.map((data) => ({
-      name: data.name,
-      id: data.id,
-      image: data.sprites['front_default'],
-      type: data.types.map((type) => type.type.name).joint(', ')
-    }));
-    displayPokemon(pokemon);
-
-  });
-}; 
+const fetchPokemon = async () => {
+  const url = `https://pokeapi.co/api/v2/pokemon?limit=150`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const pokemon = data.results.map((result, index) => ({
+    name: result.name,
+    id: index + 1,
+    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`
+  }));
+  displayPokemon(pokemon);
+};
 
 const displayPokemon = (pokemon) => {
-  console.log(pokemon);
-  const pokemonHTMLString = pokemon.map (pokemon =>`
-  <li>
-    <img class="card-image" src ="${pokemon.image}"/>
-    <h2 class="card-title>${pokeman.id}. ${pokeman.name}</h2>
-    <p class="card-subtitle">Type: ${pokeman.type}</p>
-  </li>
-
-  `
+  const pokemonHTMLString = pokemon
+    .map(
+      (pokemon) => `
+      <li class="card" onclick="selectPokemon(${pokemon.id})">
+        <img class="card-image" src="${pokemon.image}"/>
+        <h2 class="card-title"> ${pokemon.id}. ${pokemon.name}</h2>
+      </li>
+    `
     )
-  
-    .joint(' ')
+    .join('');
   pokedex.innerHTML = pokemonHTMLString;
 };
 
-fecthPokemon();
+const selectPokemon = async (id) => {
+  if (!pokeCache[id]) {
+    const url = `https://pokeapi.co/api/v2/pokemon/${id}`;
+    const res = await fetch(url);
+    const pokemon = await res.json();
+    pokeCache[id] = pokemon;
+    displayPopup(pokemon);
+  }
+};
 
+const displayPopup = (pokemon) => {
+  const type = pokemon.types.map((type) => type.type.name).join(', ');
+  const image = pokemon.sprites['front_default'];
+  const htmlString = `
+    <div class="popup">
+      <button id="closeBtn" onclick="closePopup()">Close</button>
+      <div class="card">
+        <img class="card-image" src="${image}"/>
+        <h2 class="card-title"> ${pokemon.id}. ${pokemon.name}</h2>
+        <p><small>Height: </small>${pokemon.height} 
+        | <small>Weight: </small>${pokemon.weight} 
+        | <small>Type: </small>${type}</p>
+      </div>
+    </div>
+  `;
+  pokedex.innerHTML = htmlString + pokedex.innerHTML;
+  console.log(htmlString);
+};
 
+const closePopup = () => {
+  const popup = document.querySelector('.popup');
+  if (popup) {
+    popup.remove();
+    displayPopup()
+  }
+};
+
+fetchPokemon();
