@@ -1,6 +1,5 @@
 const pokedex = document.getElementById('pokedex');
 const pokeCache = {};
-
 const fetchPokemon = async () => {
   const url = `https://pokeapi.co/api/v2/pokemon?limit=150`;
   const res = await fetch(url);
@@ -34,6 +33,8 @@ const selectPokemon = async (id) => {
     const pokemon = await res.json();
     pokeCache[id] = pokemon;
     displayPopup(pokemon);
+  } else {
+    displayPopup(pokeCache[id]);
   }
 };
 
@@ -52,7 +53,7 @@ const displayPopup = (pokemon) => {
       </div>
     </div>
   `;
-  pokedex.innerHTML = htmlString + pokedex.innerHTML;
+  pokedex.insertAdjacentHTML('afterbegin', htmlString);
   console.log(htmlString);
 };
 
@@ -60,7 +61,6 @@ const closePopup = () => {
   const popup = document.querySelector('.popup');
   if (popup) {
     popup.remove();
-    displayPopup()
   }
 };
 

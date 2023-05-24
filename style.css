@@ -25,7 +25,8 @@ h1 {
 
 .card {
   list-style: none;
-  padding: 40px;
+  padding: 30px;
+  padding-bottom: 20%;
   background-color: #f4f4f4;
   color: #222;
 text-align: center;
@@ -49,7 +50,7 @@ text-align: center;
 }
 
 .card-image {
-  height: 180px;
+  height: 100px;
 }
 
 @keyframes bounce {
@@ -70,12 +71,10 @@ text-align: center;
 
 .popup {
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vw;
+  top: 0%;
+  left: 0%;
   background: blanchedalmond;
   opacity: 0.95;
-  display: flex;
   justify-content: center;
   align-items: center;
 
@@ -88,8 +87,9 @@ text-align: center;
 
 }
 
+
 button {
-  background-color: rgb(2, 153, 2);
+  background-color: rgb(240, 5, 5);
   padding: 10px 20px;
   border: none;
   color: white;
