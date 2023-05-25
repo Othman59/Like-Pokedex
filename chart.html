@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Statistiques des Pokémon</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="pokemonChart" width="400" height="400"></canvas>
+
+    <script>
+        // Données de démonstration des statistiques des Pokémon
+        var pokemonStats = [
+            { name: "Pikachu", hp: 35, attack: 55, defense: 40, speed: 90 },
+            { name: "Bulbasaur", hp: 45, attack: 49, defense: 49, speed: 45 },
+            { name: "Charmander", hp: 39, attack: 52, defense: 43, speed: 65 },
+            { name: "Squirtle", hp: 44, attack: 48, defense: 65, speed: 43 },
+        ];
+
+        // Récupérer le canvas du graphique
+        var ctx = document.getElementById("pokemonChart").getContext("2d");
+
+        // Créer un graphique à barres
+        var chart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: pokemonStats.map(pokemon => pokemon.name),
+                datasets: [{
+                    label: "Statistiques des Pokémon",
+                    data: pokemonStats.map(pokemon => pokemon.hp),
+                    backgroundColor: "rgba(255, 99, 132, 0.5)", // Couleur des barres
+                    borderColor: "rgba(255, 99, 132, 1)", // Couleur des bordures
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100 // Définir la valeur maximale de l'axe Y
+                    }
+                },
+                onClick: function(e, elements) {
+                    if (elements.length > 0) {
+                        var index = elements[0].index;
+                        var pokemon = pokemonStats[index];
+
+                        // Mettre à jour le graphique avec les statistiques du Pokémon sélectionné
+                        chart.data.datasets[0].data = [pokemon.hp, pokemon.attack, pokemon.defense, pokemon.speed];
+                        chart.update();
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+  
